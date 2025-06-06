@@ -138,6 +138,7 @@ class LifeClockWidget(QWidget):
         age_in_years = age.years + age.months / 12 + age.days / 365.25
         
         # 人生の前半（AM）か後半（PM）かを判定
+        # 年齢が寿命の半分より小さい場合はAM、それ以上はPMを表示
         is_am = age_in_years < (self.life_expectancy / 2)
         text = "AM" if is_am else "PM"
         x = center.x() - 15
