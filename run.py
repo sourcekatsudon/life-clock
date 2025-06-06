@@ -5,6 +5,21 @@ import os
 import sys
 import json
 import subprocess
+import platform
+
+# PyQt5のプラグインパスを設定（Windows環境用）
+if platform.system() == 'Windows':
+    import site
+    try:
+        # 仮想環境とグローバル環境のどちらでも動くように設定
+        site_packages = site.getsitepackages()[0]
+        qt_plugin_path = os.path.join(site_packages, 'PyQt5', 'Qt5', 'plugins')
+        if os.path.exists(qt_plugin_path):
+            os.environ['QT_PLUGIN_PATH'] = qt_plugin_path
+            os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = os.path.join(qt_plugin_path, 'platforms')
+            print(f"Qt プラグインパスを設定しました: {qt_plugin_path}")
+    except Exception as e:
+        print(f"環境変数の設定中にエラーが発生しました: {e}")
 
 def check_requirements():
     """必要なライブラリがインストールされているか確認"""
