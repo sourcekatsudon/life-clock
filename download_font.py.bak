@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import requests
+import zipfile
+import io
+import warnings
+import urllib3
+
+# 証明書検証の警告を無効化
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+def download_font():
+    """デジタル時計用のフォントをダウンロードする"""
+    # フォルダを作成
+    os.makedirs('fonts', exist_ok=True)
+    
+    # フォントファイルの保存先
+    font_path = os.path.join('fonts', 'digital.ttf')
+    
+    # すでにフォントが存在する場合はスキップ
+    if os.path.exists(font_path):
+        print(f"フォントファイルはすでに存在します: {font_path}")
+        return    try:
+        # デジタルフォントのダウンロード (別のデジタルフォント - Press Start 2P)
+        font_url = "https://github.com/google/fonts/raw/main/ofl/pressstart2p/PressStart2P-Regular.ttf"
+        
+        print("フォントをダウンロード中...")
+        response = requests.get(font_url, verify=False)  # 証明書検証をスキップ
+        response.raise_for_status()  # エラーがあれば例外を発生
+        
+        # ダウンロードしたzipを展開
+        with zipfile.ZipFile(io.BytesIO(response.content)) as z:
+            # TTFファイルを探す
+            for file_name in z.namelist():
+                if file_name.endswith('.ttf') and 'mono' in file_name.lower():
+                    # モノスペースのデジタルフォントを選択
+                    with open(font_path, 'wb') as f:
+                        f.write(z.read(file_name))
+                    print(f"フォントをダウンロードしました: {font_path}")
+                    break
+            else:
+                # フォントが見つからなかった場合
+                print("適切なTTFフォントが見つかりませんでした。")
+    
+    except Exception as e:
+        print(f"フォントのダウンロード中にエラーが発生しました: {e}")
+        print("デフォルトフォントを使用します。")
+
+if __name__ == "__main__":
+    download_font()
