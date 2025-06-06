@@ -8,7 +8,7 @@
 - 長針：80年（設定可能な寿命）で2周する（現在の年齢を表示）
 - 短針：日本標準時の月に対応
 - 秒針：1日で1周
-- AM/PM表示
+- AM/PM表示（人生の前半=AM、後半=PM）
 - デジタル表示（中央下部）：
   - 年月日、現在時刻、曜日
   - 誕生日からの経過年月日
@@ -17,9 +17,45 @@
 ## 必要な環境
 
 - Python 3.6以上
-- PyQt5
-- Pillow (PIL)
-- python-dateutil
+
+## インストールと実行（仮想環境を使用）
+
+このプロジェクトは仮想環境を使用してローカルフォルダ内で環境を完結させることができます。
+
+### 自動インストールと実行
+
+#### Windowsの場合
+```
+start_life_clock.bat
+```
+を実行するだけで、仮想環境の構築から実行まですべて自動で行われます。
+
+#### Linux/MacOSの場合
+```
+chmod +x run.sh
+./run.sh
+```
+
+### 手動でのセットアップ
+
+1. 仮想環境の作成と有効化：
+```bash
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# Linux/MacOS
+source venv/bin/activate
+```
+
+2. 依存関係のインストール：
+```bash
+pip install -r requirements.txt
+```
+
+3. アプリケーションの実行：
+```bash
+python run.py
+```
 
 ## インストール方法
 
