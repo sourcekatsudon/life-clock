@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生時計 - Life Clock</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">人生時計</h1>
+            <p class="subtitle">あなたの人生を時計で表現する</p>
+        </header>
+
+        <main class="main">
+            <div class="clock-container">
+                <canvas id="clockCanvas" width="350" height="350"></canvas>
+                <div class="am-pm-indicator" id="amPmIndicator">AM</div>
+            </div>
+
+            <div class="info-panel">
+                <div class="current-time">
+                    <div class="date" id="currentDate"></div>
+                    <div class="time" id="currentTime"></div>
+                </div>
+                
+                <div class="life-info">
+                    <div class="life-stat">
+                        <span class="label">現在の年齢</span>
+                        <span class="value" id="currentAge"></span>
+                    </div>
+                    <div class="life-stat">
+                        <span class="label">残り時間</span>
+                        <span class="value" id="remainingTime"></span>
+                    </div>
+                    <div class="life-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="lifeProgress"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="settings-panel" id="settingsPanel">
+            <h3>設定</h3>
+            <div class="setting-group">
+                <label for="birthDate">生年月日</label>
+                <input type="date" id="birthDate" value="1988-11-18">
+            </div>
+            <div class="setting-group">
+                <label for="lifeExpectancy">想定寿命</label>
+                <input type="number" id="lifeExpectancy" value="70" min="50" max="120">
+                <span>年</span>
+            </div>
+            <div class="setting-group">
+                <label for="theme">テーマ</label>
+                <select id="theme">
+                    <option value="cool">かっこいい</option>
+                    <option value="retro">レトロ</option>
+                    <option value="simple">シンプル</option>
+                    <option value="bright">明るい</option>
+                    <option value="soft">ゆるい</option>
+                </select>
+            </div>
+            <button id="saveSettings" class="save-btn">保存</button>
+        </div>
+
+        <button class="settings-btn" id="settingsBtn">⚙️</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
