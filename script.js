@@ -337,6 +337,9 @@ class LifeClock {
         const lifeProgress = (age / this.config.lifeExpectancy) * 100;
         document.getElementById('lifeProgress').style.width = `${Math.min(lifeProgress, 100)}%`;
         document.getElementById('progressText').textContent = `${lifeProgress.toFixed(1)}%`;
+        
+        // 時計の説明を更新
+        this.updateClockDescription();
     }
     
     updateAmPmIndicator(now) {
@@ -355,6 +358,15 @@ class LifeClock {
     
     getDaysInMonth(year, month) {
         return new Date(year, month + 1, 0).getDate();
+    }
+    
+    updateClockDescription() {
+        const description = document.getElementById('clockDescription');
+        if (this.config.displayMode === 'calendar') {
+            description.textContent = '長針=日月 短針=人生 秒針=時刻';
+        } else {
+            description.textContent = '長針=分 短針=時 秒針=秒';
+        }
     }
     
     applyTheme() {
