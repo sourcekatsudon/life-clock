@@ -10,7 +10,8 @@ class LifeClock {
         this.config = {
             birthDate: new Date('1988-11-18'),
             lifeExpectancy: 70,
-            theme: 'cool'
+            theme: 'cool',
+            displayMode: 'calendar'
         };
         
         // テーマ設定
@@ -77,12 +78,14 @@ class LifeClock {
             this.config.birthDate = new Date(settings.birthDate);
             this.config.lifeExpectancy = settings.lifeExpectancy;
             this.config.theme = settings.theme || 'cool';
+            this.config.displayMode = settings.displayMode || 'calendar';
         }
         
         // フォームに設定を反映
         document.getElementById('birthDate').value = this.config.birthDate.toISOString().split('T')[0];
         document.getElementById('lifeExpectancy').value = this.config.lifeExpectancy;
         document.getElementById('theme').value = this.config.theme;
+        document.getElementById('displayMode').value = this.config.displayMode;
         
         // テーマを適用
         this.applyTheme();
@@ -92,15 +95,18 @@ class LifeClock {
         const birthDate = document.getElementById('birthDate').value;
         const lifeExpectancy = parseInt(document.getElementById('lifeExpectancy').value);
         const theme = document.getElementById('theme').value;
+        const displayMode = document.getElementById('displayMode').value;
         
         this.config.birthDate = new Date(birthDate);
         this.config.lifeExpectancy = lifeExpectancy;
         this.config.theme = theme;
+        this.config.displayMode = displayMode;
         
         localStorage.setItem('lifeClockSettings', JSON.stringify({
             birthDate: birthDate,
             lifeExpectancy: lifeExpectancy,
-            theme: theme
+            theme: theme,
+            displayMode: displayMode
         }));
         
         // テーマを適用
@@ -219,22 +225,43 @@ class LifeClock {
     drawHands(now) {
         const theme = this.themes[this.config.theme];
         
-        // 秒針（1日で1周）
-        const totalSecondsInDay = 24 * 60 * 60;
-        const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-        const secondAngle = (currentSeconds / totalSecondsInDay) * 2 * Math.PI - Math.PI / 2;
-        this.drawHand(secondAngle, this.radius - 30, theme.secondHand, 2);
-        
-        // 短針（年齢に対応、寿命で2周）- 短針は短いので年齢を表す
-        const age = this.calculateAge(now);
-        const ageProgress = age / this.config.lifeExpectancy;
-        const ageAngle = (ageProgress * 4 * Math.PI) - Math.PI / 2; // 2周するため4π
-        this.drawHand(ageAngle, this.radius - 80, theme.hourHand, 6);
-        
-        // 長針（月に対応、1年で1周）- 長針は長いので月を表す
-        const monthProgress = (now.getMonth() + 1.0 + now.getDate() / this.getDaysInMonth(now.getFullYear(), now.getMonth())) / 12;
-        const monthAngle = monthProgress * 2 * Math.PI - Math.PI / 2;
-        this.drawHand(monthAngle, this.radius - 60, theme.minuteHand, 4);
+        if (this.config.displayMode === 'calendar') {
+            // カレンダー式（現在のロジック）
+            // 秒針（1日で1周）
+            const totalSecondsInDay = 24 * 60 * 60;
+            const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const secondAngle = (currentSeconds / totalSecondsInDay) * 2 * Math.PI - Math.PI / 2;
+            this.drawHand(secondAngle, this.radius - 30, theme.secondHand, 2);
+            
+            // 短針（年齢に対応、寿命で2周）- 短針は短いので年齢を表す
+            const age = this.calculateAge(now);
+            const ageProgress = age / this.config.lifeExpectancy;
+            const ageAngle = (ageProgress * 4 * Math.PI) - Math.PI / 2; // 2周するため4π
+            this.drawHand(ageAngle, this.radius - 80, theme.hourHand, 6);
+            
+            // 長針（月に対応、1年で1周）- 長針は長いので月を表す
+            const monthProgress = (now.getMonth() + 1.0 + now.getDate() / this.getDaysInMonth(now.getFullYear(), now.getMonth())) / 12;
+            const monthAngle = monthProgress * 2 * Math.PI - Math.PI / 2;
+            this.drawHand(monthAngle, this.radius - 60, theme.minuteHand, 4);
+        } else {
+            // 単純式（寿命を24時間に換算）
+            const age = this.calculateAge(now);
+            const ageProgress = age / this.config.lifeExpectancy;
+            const totalMinutes = ageProgress * 24 * 60; // 寿命を24時間（1440分）に換算
+            const totalSeconds = totalMinutes * 60; // 秒数に換算
+            
+            // 短針（12時間で1周 → 寿命の半分で1周）
+            const hourAngle = (ageProgress * 4 * Math.PI) - Math.PI / 2; // 2周するため4π
+            this.drawHand(hourAngle, this.radius - 80, theme.hourHand, 6);
+            
+            // 長針（60分で1周 → 60分の1の速度）
+            const minuteAngle = (totalMinutes % 60) / 60 * 2 * Math.PI - Math.PI / 2;
+            this.drawHand(minuteAngle, this.radius - 60, theme.minuteHand, 4);
+            
+            // 秒針（60秒で1周）
+            const secondAngle = (totalSeconds % 60) / 60 * 2 * Math.PI - Math.PI / 2;
+            this.drawHand(secondAngle, this.radius - 30, theme.secondHand, 2);
+        }
     }
     
     drawHand(angle, length, color, width) {
