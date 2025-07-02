@@ -302,6 +302,10 @@ class LifeClock {
         document.getElementById('remainingTime').textContent = 
             `${remainingYears}年${remainingMonths}ヶ月${remainingDays}日`;
         
+        // 残り週数計算
+        const remainingWeeks = Math.floor(remaining / (1000 * 60 * 60 * 24 * 7));
+        document.getElementById('remainingWeeks').textContent = `${remainingWeeks}週`;
+        
         // 人生の進捗
         const lifeProgress = (age / this.config.lifeExpectancy) * 100;
         document.getElementById('lifeProgress').style.width = `${Math.min(lifeProgress, 100)}%`;
